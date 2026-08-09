@@ -1,6 +1,9 @@
 name: 🐛 버그 리포트
 description: 의도한 동작과 실제 동작이 다른 경우
-labels: ["bug"]
+# 유형은 라벨이 아니라 조직 단위 Issue Type 으로 관리한다.
+# 라벨은 repo 마다 따로 정의되지만 Type 은 조직 전체가 하나의 정의를 공유하고,
+# 배타적이며(하나만), Epic 계층의 기준이 된다.
+type: Bug
 body:
   - type: markdown
     attributes:
