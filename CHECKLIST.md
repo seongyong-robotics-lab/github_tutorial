@@ -313,17 +313,57 @@
 
 ## Stage 7 — 로봇 SW 멀티 repo 구조
 
-- [ ] Org에 repo 3개 생성 — `robot-stack`, `firmware-motor`, `robot-config-model-a`
-- [ ] `robot-stack`에 골격 디렉터리만 — `src/interfaces`, `src/drivers`, `src/control`, `src/bringup`
-- [ ] `robot.repos` 작성 후 `vcs import`로 조립해보기
-- [ ] 각 repo에 `v0.1.0` 태그
-- [ ] `releases` repo 생성 + 매니페스트 YAML 작성
-- [ ] GitHub Release 생성하고 매니페스트 첨부
-- [ ] 크로스 repo 이슈 참조 — `firmware-motor` 이슈에서 `ORG/robot-stack#1` 언급
-- [ ] `.github` repo에 재사용 워크플로 작성 → 다른 repo에서 `uses:`로 호출
-- [ ] 💥 `.repos`의 태그를 `v9.9.9`로 바꿔 import → 에러 메시지 읽기
+- [x] Org에 repo 3개 생성 — `robot-stack`, `firmware-motor`, `robot-config-model-a`
+- [x] `robot-stack` 골격 — `src/interfaces`, `src/drivers`, `src/control`, `src/bringup`
+- [x] `robot.repos` + `dev.repos` 작성 후 `vcs import` 로 조립 확인
+- [x] 각 repo에 `v0.1.0` 태그
+- [x] `releases` repo 생성 + `model-a/2026.08.0.yaml` 매니페스트
+- [x] GitHub Release `model-a/2026.08.0` 생성하고 매니페스트 첨부
+- [x] 크로스 repo 이슈 참조 — `firmware-motor#1` → `robot-stack#1` 타임라인에 연결 확인
+- [x] `.github` repo 재사용 워크플로 → `github_tutorial` 의 CI 가 `uses:` 로 호출
+- [x] 💥 `.repos` 태그를 `v9.9.9` 로 바꿔 import → 에러 확인
 
-**✅ 완료 조건** — `.repos` 하나로 워크스페이스 조립 / 매니페스트로 "뭐가 올라갔나" 즉답
+**✅ 완료 조건** — `.repos` 하나로 워크스페이스 조립 / 매니페스트로 "뭐가 올라갔나" 즉답 → **달성**
+
+> **① 재사용 워크플로로 바꾸면 status check 이름이 바뀐다** ← 가장 값진 발견
+> ```
+> 직접 정의:  lint-and-test
+> uses: 호출:  call-shared-ci / lint-and-test    <- 호출하는 job 이름이 앞에 붙는다
+> ```
+> Ruleset 은 여전히 `lint-and-test` 를 기다리고 있었고, **체크는 통과했는데 머지가 막혔다**
+> (`mergeStateStatus=BLOCKED`). 오지 않을 이름을 영원히 기다리는 상태다.
+>
+> Stage 3 에서 "status check 이름 = job 의 name" 이라고 배웠는데, 재사용 워크플로에서는
+> `<호출하는 job> / <호출된 job>` 이 된다. **조직 전체가 재사용 워크플로로 옮길 때
+> 모든 repo 의 Ruleset 을 같이 고쳐야 한다.**
+>
+> **② `.repos` 는 ASCII 로만 쓴다**
+> vcstool 이 플랫폼 기본 인코딩(한국어 Windows = cp949)으로 파일을 열어서
+> 한글 주석이 있으면 `UnicodeDecodeError` 로 죽는다. `PYTHONUTF8=1` 로 우회되지만
+> 환경변수에 의존하면 팀원 PC 마다 다르게 동작한다. 설명은 `docs/multi-repo.md` 로.
+>
+> **③ 💥 존재하지 않는 태그 — 조용하지 않지만 눈에 안 띈다**
+> ```
+> vcs import exit code = 1
+> Could not checkout ref 'v9.9.9': fatal: invalid reference
+>
+> 그런데 디렉터리는 남고 main 이 체크아웃된다.
+> git describe 는 v0.1.0 을 보여준다 (main 이 우연히 그 위치라서)
+> ```
+> 종료 코드를 확인하지 않는 스크립트는 조립 성공으로 착각한다. **눈으로 봐도 정상으로 보인다.**
+>
+> **④ 두 가지 "함께" 를 구분한다**
+> | 질문 | 답하는 파일 | `firmware-motor` |
+> |---|---|---|
+> | 무엇이 **함께 빌드**되는가 | `robot.repos` | ❌ 없음 (툴체인이 다름) |
+> | 무엇이 **함께 릴리스**되는가 | `releases/model-a/*.yaml` | ⭕ 있음 (같은 로봇에 올라감) |
+>
+> `.repos` 에 펌웨어를 넣으면 colcon 이 빌드하려 든다. 릴리스 매니페스트에서 빼면
+> "그때 뭐가 올라갔나"에 답할 수 없다. **경계가 다른 두 파일이다.**
+>
+> **⑤ 재사용 워크플로는 `@main` 이 아니라 태그로 고정한다**
+> `@main` 이면 공통 워크플로의 실수가 즉시 조직 전체 CI 를 동시에 깬다.
+> `@v1` 로 고정하고 태그를 옮기는 것으로 배포하면 언제 무엇이 바뀌었는지가 남는다.
 
 ---
 
