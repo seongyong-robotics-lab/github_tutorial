@@ -6,7 +6,8 @@ requires-python = ">=3.10"
 dependencies = []
 
 [project.optional-dependencies]
-dev = ["pytest>=8.0", "ruff>=0.6"]
+# requests 는 tools/sync_notion.py 가 쓴다. 런타임 의존이 아니라 개발/CI 의존이다.
+dev = ["pytest>=8.0", "ruff>=0.6", "requests>=2.32"]
 
 [build-system]
 requires = ["setuptools>=68"]
@@ -17,7 +18,8 @@ where = ["src"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-pythonpath = ["src"]
+# "." 은 tools/ 를 import 하기 위해 필요하다 (tools/sync_notion.py 의 판단 로직 테스트).
+pythonpath = ["src", "."]
 
 [tool.ruff]
 line-length = 100
