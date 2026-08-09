@@ -1,6 +1,7 @@
 name: ✨ 기능 요청
 description: 새 기능 또는 기존 기능의 동작 확장
-labels: ["feature"]
+# 유형은 조직 단위 Issue Type 으로. (bug_report.yml 의 주석 참고)
+type: Feature
 body:
   - type: markdown
     attributes:
