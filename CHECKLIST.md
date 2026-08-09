@@ -190,9 +190,10 @@
 - [x] 기존 이슈 12건에 Issue Type 부여, `#22` 는 `Epic`
 - [x] **조직 Project** `2026 Roadmap` (orgs/1) + `Start date`/`Target date` 필드
 - [x] 같은 Epic `#22` 가 조직 로드맵 + 팀 보드에 동시 존재 (복사 아님)
-- [~] Project 템플릿 — 조직에 빈 템플릿 생성. **팀 보드는 개인 소유라 템플릿화 불가**
-- [ ] Roadmap 뷰 레이아웃 + Date fields 지정 ← UI
-- [ ] 조직 Project 의 `Auto-add sub-issues to project` 끄기 ← UI
+- [x] Project 템플릿 `Team Sprint Board Standard` (orgs/2) → 그 템플릿으로 `#4` 생성.
+      뷰 2개(Backlog/Board) + 필드 4개가 그대로 복제되고 **항목은 0개** — 구조만 복제됨
+- [x] Roadmap 뷰 레이아웃 + Date fields 지정
+- [x] 조직 Project 의 `Auto-add sub-issues to project` 끄기 (팀 보드에서는 켜둠)
 
 **✅ 완료 조건** — 한 이슈가 두 보드에 동시 존재 / 경로별 리뷰어 자동 지정 → **달성**
 
@@ -234,6 +235,12 @@
 > repo 는 transfer 가 되지만 Project 는 안 된다. 팀 보드(`users/.../projects/8`)가 개인
 > 소유로 남은 이유다. 실무라면 **처음부터 조직 소유로 만들어야 한다** — 개인 계정에 두면
 > 그 사람이 떠날 때 보드가 함께 사라진다. 템플릿 기능도 조직 Project 전용이다.
+>
+> **⑦ 템플릿은 "구조"만 복제한다**
+> `Team Sprint Board Standard` → `#4` 복제 결과: 뷰·필드·워크플로 설정은 따라오고
+> **항목(이슈)과 Insights 차트는 따라오지 않는다.** 일이 담긴 보드를 복사하는 게 아니라
+> 새 팀이 같은 규격으로 시작하게 만드는 장치다.
+> 필드 이름이 `Estimate`/`Points`/`Size` 로 갈라지는 것을 막는 가장 효과적인 방법.
 >
 > **⑥ 기본 워크플로가 로드맵을 오염시켰다**
 > Epic `#22` 하나만 넣었는데 항목이 6개가 됐다. `Auto-add sub-issues to project` 가
