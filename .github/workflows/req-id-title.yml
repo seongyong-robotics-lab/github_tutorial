@@ -1,0 +1,58 @@
+name: Add REQ ID to issue title
+
+# 이슈 폼에서 받은 REQ ID 를 제목 앞에 [REQ-003] 형태로 붙인다.
+#
+# 왜 필요한가:
+#   Notion 동기화(sync_notion.py)는 이슈 제목에서 정규식으로 REQ ID 를 뽑는다.
+#   제목 규약이 서지 않으면 그 아래 자동화가 통째로 동작하지 않는다.
+#   사람에게 "제목에 꼭 붙이세요"라고 부탁하는 대신 기계가 붙인다.
+#
+# edited 도 트리거에 넣은 이유:
+#   이슈를 만든 뒤 본문에 REQ ID 를 나중에 채우는 경우가 있다.
+#   제목을 고치면 edited 가 다시 발생하지만, 접두어 검사에서 즉시 빠져나오므로
+#   무한 루프가 되지 않는다.
+on:
+  issues:
+    types: [opened, edited]
+
+permissions:
+  issues: write
+
+jobs:
+  prefix-title:
+    name: prefix-title
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            const issue = context.payload.issue;
+            const title = issue.title || "";
+
+            // 이미 붙어 있으면 아무것도 하지 않는다 (루프 방지 지점)
+            if (/^\[REQ-\d+\]/.test(title)) {
+              core.info(`이미 REQ ID 가 있음: ${title}`);
+              return;
+            }
+
+            const body = issue.body || "";
+
+            // 1순위: 이슈 폼의 "관련 Notion REQ ID" 항목 아래 값
+            // 2순위: 본문 어디든 나타나는 첫 REQ ID
+            const scoped = body.match(/###\s*관련 Notion REQ ID\s*\n+\s*(REQ-\d+)/);
+            const loose = body.match(/\bREQ-\d+\b/);
+            const reqId = scoped ? scoped[1] : (loose ? loose[0] : null);
+
+            if (!reqId) {
+              core.info("본문에서 REQ ID 를 찾지 못함. 제목을 건드리지 않는다.");
+              return;
+            }
+
+            const newTitle = `[${reqId}] ${title}`;
+            await github.rest.issues.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue.number,
+              title: newTitle,
+            });
+            core.notice(`제목 갱신: ${newTitle}`);
