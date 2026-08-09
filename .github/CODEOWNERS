@@ -1,0 +1,32 @@
+# 경로별 자동 리뷰어 지정.
+#
+# 규칙:
+#   - gitignore 와 같은 패턴 문법을 쓴다.
+#   - **마지막에 매칭된 줄이 이긴다.** 그래서 넓은 규칙을 위에, 좁은 규칙을 아래에 둔다.
+#   - 여기 지정된 팀/사용자는 repo 에 **쓰기 권한이 있어야** 리뷰어로 지정된다.
+#   - Ruleset 의 "Require review from Code Owners" 를 켜면 이 파일이 곧 머지 게이트가 된다.
+#     (지금은 혼자라 켜지 않았다. Stage 8 에서 팀원이 생기면 켠다.)
+
+# 기본값 — 명시되지 않은 모든 경로
+*                                   @seongyong-robotics-lab/autonomy
+
+# 상위 스택 (ROS 2 / Python)
+/src/                               @seongyong-robotics-lab/autonomy
+/tests/                             @seongyong-robotics-lab/autonomy
+
+# 안전 판단 로직은 특히 눈이 더 필요하다.
+# 위의 /src/ 규칙보다 아래에 있어야 이긴다.
+/src/mini_delivery_bot/safety.py    @seongyong-robotics-lab/autonomy
+
+# 펌웨어 — 툴체인·릴리스 주기·인증 경계가 상위 스택과 다르다.
+# 이 repo 에는 아직 없지만, Stage 7 에서 firmware-* repo 로 분리되기 전까지의 자리.
+/firmware/                          @seongyong-robotics-lab/firmware
+
+# CI / 자동화 — 여기가 뚫리면 나머지 게이트가 전부 무의미해진다.
+/.github/                           @seongyong-robotics-lab/autonomy
+
+# 문서는 누가 봐도 되지만, 기록의 일관성을 위해 소유자는 둔다.
+/docs/                              @seongyong-robotics-lab/autonomy
+
+# 정답지는 커리큘럼 자산이라 변경 시 확인이 필요하다.
+/_answers/                          @seongyong-robotics-lab/autonomy
