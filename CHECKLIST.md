@@ -182,17 +182,63 @@
 
 ## Stage 5 — Organization 전환
 
-- [ ] 무료 Organization 생성 (예: `seongyong-robotics-lab`)
-- [ ] `github_tutorial` repo를 Org로 **transfer**
-- [ ] Team 2개 생성 — `autonomy`, `firmware`. 본인을 양쪽에 배치
-- [ ] `.github/CODEOWNERS` 작성 → PR 열어서 **리뷰어 자동 지정 확인**
-- [ ] Org Settings에서 **Issue Types** 설정 (Epic / Feature / Task / Bug)
-- [ ] 기존 이슈에 Issue Type 부여, 큰 이슈는 `Epic`으로
-- [ ] **조직 Project** 생성 → Roadmap 뷰 → Epic만 올리고 Start/Target date 채우기
-- [ ] 같은 Epic 이슈를 **팀 Project에도** 추가 → 한 이슈가 두 보드에 있는 것 확인
-- [ ] Project를 템플릿으로 저장하고, 그 템플릿으로 두 번째 프로젝트 생성
+- [x] 무료 Organization 생성 — `seongyong-robotics-lab`
+- [x] `github_tutorial` repo를 Org로 **transfer** — 부속물 전부 보존
+- [x] Team 2개 — `autonomy`, `firmware`. 본인 maintainer + repo push 권한
+- [x] `.github/CODEOWNERS` 작성 → PR #26 에서 `requested_teams: autonomy` 확인
+- [x] **Issue Types** — 기본 `Task`/`Bug`/`Feature` + `Epic` 추가 (API 로 생성 가능)
+- [x] 기존 이슈 12건에 Issue Type 부여, `#22` 는 `Epic`
+- [x] **조직 Project** `2026 Roadmap` (orgs/1) + `Start date`/`Target date` 필드
+- [x] 같은 Epic `#22` 가 조직 로드맵 + 팀 보드에 동시 존재 (복사 아님)
+- [~] Project 템플릿 — 조직에 빈 템플릿 생성. **팀 보드는 개인 소유라 템플릿화 불가**
+- [ ] Roadmap 뷰 레이아웃 + Date fields 지정 ← UI
+- [ ] 조직 Project 의 `Auto-add sub-issues to project` 끄기 ← UI
 
-**✅ 완료 조건** — 한 이슈가 두 보드에 동시 존재 / 경로별 리뷰어 자동 지정
+**✅ 완료 조건** — 한 이슈가 두 보드에 동시 존재 / 경로별 리뷰어 자동 지정 → **달성**
+
+> **① transfer 는 무손실, 재생성은 손실**
+> 같은 repo 를 옮기는 것과 지우고 다시 만드는 것은 결과가 완전히 다르다.
+>
+> | | repo 삭제 후 재생성 (Stage 2) | Org 로 transfer (Stage 5) |
+> |---|---|---|
+> | 이슈 / PR | 전부 소실 | 유지 (번호까지) |
+> | 머지 설정 | **초기화됨** | 유지 |
+> | Ruleset / Secret / 라벨 / 마일스톤 | 소실 | 유지 |
+>
+> **② Issue Type — "정의는 위, 값은 아래"**
+> ```
+> [정의] GET /orgs/{org}/issue-types  →  id=35899875 name=Bug   ← 조직에 한 벌
+> [값]   GET /repos/.../issues/8      →  type:{id:35899875}     ← 이슈는 포인터만
+> ```
+> 이 구조가 GitHub 전반에 반복된다. 달라지는 건 정의가 얼마나 높이 있느냐뿐이다.
+>
+> | | 정의가 사는 곳 | 값이 사는 곳 |
+> |---|---|---|
+> | Label | repo | 이슈 |
+> | Issue Type | **조직** | 이슈 |
+> | Project 필드 | Project | project item |
+>
+> 정의를 위로 올리면 "어긋나지 않게 조심하자"가 "어긋날 수가 없다"로 바뀐다.
+> repo 가 10개여도 `Bug` 는 물리적으로 하나다.
+>
+> **③ 라벨 5개 → 3개**
+> `bug`/`feature` 는 Issue Type 과 정면으로 겹쳐 삭제했다. 남은 `chore`/`idea`/`blocked` 는
+> Type 에 대응하는 개념이 없는 **성질**이다. 판단 기준: *"A이면서 동시에 B일 수 있는가?"*
+> — 없으면 Type(배타적), 있으면 Label.
+>
+> **④ PR 은 Issue Type 을 가질 수 없다**
+> `type` 필드 자체가 없다. 릴리스 노트를 PR 라벨로 분류하려면 PR 전용 라벨이 따로 필요하다.
+> Stage 7 에서 릴리스를 만들 때 다시 판단한다.
+>
+> **⑤ Project 는 조직으로 이전할 수 없다**
+> repo 는 transfer 가 되지만 Project 는 안 된다. 팀 보드(`users/.../projects/8`)가 개인
+> 소유로 남은 이유다. 실무라면 **처음부터 조직 소유로 만들어야 한다** — 개인 계정에 두면
+> 그 사람이 떠날 때 보드가 함께 사라진다. 템플릿 기능도 조직 Project 전용이다.
+>
+> **⑥ 기본 워크플로가 로드맵을 오염시켰다**
+> Epic `#22` 하나만 넣었는데 항목이 6개가 됐다. `Auto-add sub-issues to project` 가
+> 켜져 있어 sub-issue 5건을 따라 넣었기 때문. **로드맵은 Epic 만** 있어야 2계층이 성립한다.
+> 두 프로젝트의 워크플로 설정은 서로 달라야 한다 — 로드맵은 Epic 만, 팀 보드는 Task 까지.
 
 ---
 

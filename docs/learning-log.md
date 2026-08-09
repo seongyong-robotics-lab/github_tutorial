@@ -32,3 +32,8 @@
 오늘 한 것 : Epic #22 + sub-issue 5건(기존 이슈 연결), Milestone v0.1, 필드 3종, 뷰 3종, Insights 차트. 압축 스프린트 1회 — 계획 13점 중 3점 완료, 10점 이월, velocity 반영해 Sprint 2 를 5점으로 축소. #20 은 시뮬레이션이 아니라 실제로 고침(PR #23)
 막힌 것    : (1) iteration 필드는 GraphQL 로 **생성만** 되고 주기 설정 뮤테이션이 없어 UI 필수. (2) `gh project field-create` 는 ITERATION 을 아예 거부. (3) sub-issue API 는 이슈 번호가 아니라 **내부 id** 를 요구 — repo 를 넘나드는 관계라 전역 id 여야 함. (4) PowerShell 에서 GraphQL 을 인자로 넘기면 따옴표가 깨짐 → `-F query=@파일` + 변수로 해결. `Set-Content -Encoding UTF8` 은 BOM 을 붙여서 파서가 거부함
 다음 할 것 : Burn up 차트 Aug 13 확인. Stage 5 — Organization 생성, repo transfer, Team 2개, CODEOWNERS, Issue Types, 조직 Project(Roadmap)
+
+[2026-08-09] Stage 5
+오늘 한 것 : Org `seongyong-robotics-lab` 생성 → repo transfer(무손실) → Team 2개 + repo push 권한 → CODEOWNERS(PR #26 에서 팀 자동 지정 확인) → Issue Type 4종 부여 → 조직 Project `2026 Roadmap` 에 Epic #22 배치. bug/feature 라벨 삭제하고 Type 으로 일원화
+막힌 것    : (1) **Project 는 조직으로 이전이 불가능하다.** repo 만 transfer 된다. 팀 보드가 개인 소유로 남았고, 템플릿 기능도 조직 Project 전용이라 쓸 수 없었다. 처음부터 조직 소유로 만들었어야 했다. (2) 조직 로드맵에 Epic 하나만 넣었는데 `Auto-add sub-issues to project` 기본 워크플로가 하위 5건을 따라 넣어 로드맵이 오염됐다. (3) PR 은 Issue Type 을 가질 수 없어서 릴리스 노트 라벨 분류는 별도 대책이 필요하다
+다음 할 것 : Stage 6 — Notion SYS-REQ DB, REQ ID 규약(수동 2주), 반자동, 그리고 Actions + Notion API 자동 동기화. 커리큘럼이 "핵심"이라 부르는 단계
