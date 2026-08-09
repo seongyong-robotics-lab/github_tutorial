@@ -102,11 +102,17 @@ def count_open_issues(repo: str, req_id: str, token: str | None) -> int:
 
 
 def decide_status(state: str, state_reason: str, open_issues: int) -> str:
-    """GitHub 쪽 사실로부터 Notion 에 쓸 `구현 상태` 를 결정한다."""
+    """GitHub 쪽 사실로부터 Notion 에 쓸 `구현 상태` 를 결정한다.
+
+    판단 근거는 **개별 이슈가 아니라 REQ 전체**다. 하나의 REQ 에 이슈가 여러 개
+    걸릴 수 있으므로, 지금 이벤트가 난 이슈만 보고 결정하면 틀린다.
+    """
     if open_issues > 0:
         # 아직 남은 일이 있다. 개별 이슈가 어떻게 닫혔든 REQ 는 진행 중이다.
         return STATUS_IN_PROGRESS
     if state == "open":
+        # 방금 열린/다시 열린 이슈. 검색 인덱스 반영이 늦어 open_issues 가
+        # 0 으로 나올 수 있으므로 여기서 한 번 더 막는다.
         return STATUS_IN_PROGRESS
     if state_reason == "not_planned":
         return STATUS_ON_HOLD

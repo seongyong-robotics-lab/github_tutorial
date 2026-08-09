@@ -38,3 +38,12 @@ def test_remaining_open_issues_win(state_reason):
 def test_state_reason_missing_defaults_to_done():
     """오래된 이슈는 state_reason 이 비어 있을 수 있다. 닫혔으면 완료로 본다."""
     assert decide_status("closed", "", open_issues=0) == STATUS_DONE
+
+
+def test_newly_opened_issue_reverts_to_in_progress():
+    """완료된 REQ 에 새 이슈가 열리면 다시 구현 중이다.
+
+    검색 인덱스 반영이 늦어 open_issues 가 0 으로 보일 수 있으므로,
+    state == "open" 만으로도 구현 중이 되어야 한다.
+    """
+    assert decide_status("open", "", open_issues=0) == STATUS_IN_PROGRESS
