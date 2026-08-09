@@ -42,3 +42,8 @@
 오늘 한 것 : SYS-REQ DB(REQ-001~008) → 제목 규약 백필 → REQ ID 자동 삽입 워크플로 → 검색 링크 → sync_notion.py + 워크플로. 💥 REQ-999 실패 재현, 💥 양쪽 동시 변경 실험까지 완료
 막힌 것    : (1) 정답지대로 만들면 **경계 규칙을 자동화가 어긴다.** `상태` 한 칸에 승인 여부(Notion 원본)와 진행 상태(GitHub 원본)가 섞여 있어서, 초안 요구사항이 완료로 덮어써진다 → `승인 상태`/`구현 상태` 분리. **경계는 문서가 아니라 스키마에 있어야 한다.** (2) Notion 의 `ID` 는 예약어라 API 로 값을 못 넣음 → `REQ ID` 로 개명. (3) `ALTER COLUMN SET` 이 기존 속성을 바꾸지 않고 `승인 상태 1` 을 새로 만듦. DROP+RENAME 을 같은 배치에 넣으면 `승인 상태 2` 가 됨 → 두 번 나눠 실행. (4) 트리거에 `opened` 를 빠뜨려 완료된 REQ 에 새 이슈가 열려도 Notion 이 완료로 남았다
 다음 할 것 : Stage 7 — robot-stack / firmware-motor / robot-config-model-a repo, `.repos` + vcs import, v0.1.0 태그, 릴리스 매니페스트, 크로스 repo 이슈 참조, `.github` 재사용 워크플로
+
+[2026-08-10] Stage 7
+오늘 한 것 : repo 5개 추가(robot-stack / firmware-motor / robot-config-model-a / releases / .github), 전부 v0.1.0 태그. `.repos` 2벌(release/dev)로 워크스페이스 조립 확인, 릴리스 매니페스트 + GitHub Release, 크로스 repo 이슈 참조, CI 를 조직 공통 재사용 워크플로 호출로 전환
+막힌 것    : (1) **재사용 워크플로로 바꾸니 status check 이름이 `lint-and-test` → `call-shared-ci / lint-and-test` 로 바뀌었다.** Ruleset 은 옛 이름을 기다려서 체크가 통과했는데도 머지가 막혔다. 조직 전체를 재사용 워크플로로 옮길 때 모든 repo 의 Ruleset 을 같이 고쳐야 한다. (2) vcstool 이 `.repos` 를 cp949 로 열어서 한글 주석에 죽는다 → 매니페스트는 ASCII 로. (3) 존재하지 않는 태그로 import 하면 exit 1 이지만 디렉터리는 남고 main 이 체크아웃된다. 종료 코드를 안 보면 조립 성공으로 착각한다
+다음 할 것 : Stage 8 — CONTRIBUTING.md, 온보딩 체크리스트, Before/After 설득 자료, 파일럿 범위 확정. **팀원 1명과 스프린트 1회**가 완료 조건이라 혼자서는 못 끝낸다
