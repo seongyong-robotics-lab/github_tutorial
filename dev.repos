@@ -1,0 +1,21 @@
+# vcstool manifest -- DEVELOPMENT (all versions track main)
+#
+#   mkdir -p ws/src && cd ws
+#   vcs import src < ../dev.repos
+#
+# ASCII only. See the note in robot.repos.
+#
+# Same structure as robot.repos, only `version` differs. When the two files
+# drift apart (a repo added to one but not the other), the assembled
+# workspace differs and you get "works in dev, breaks in release".
+
+repositories:
+  robot_stack:
+    type: git
+    url: https://github.com/seongyong-robotics-lab/robot-stack.git
+    version: main
+
+  robot_config_model_a:
+    type: git
+    url: https://github.com/seongyong-robotics-lab/robot-config-model-a.git
+    version: main
