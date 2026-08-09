@@ -1,42 +1,27 @@
 name: CI
 
-# PR 에서 게이트 역할을 하고, main 에서는 머지 후 상태를 남긴다.
+# 조직 공통 워크플로를 호출한다. 실제 스텝은 여기 없다:
+#   seongyong-robotics-lab/.github/.github/workflows/python-ci.yml
+#
+# repo 가 늘면 같은 CI 를 복사하게 되고, 복사본은 반드시 갈라진다.
+# 한 곳에 두면 Python 버전 하나 올리는 것이 PR 하나로 끝난다.
+#
+# @v1 로 고정한 이유:
+#   @main 으로 참조하면 공통 워크플로의 변경이 즉시 모든 repo 에 퍼진다.
+#   편하지만 거기서 실수하면 조직 전체 CI 가 동시에 깨진다.
+#   태그를 옮기는 것으로 배포하면 언제 무엇이 바뀌었는지가 남는다.
 on:
   pull_request:
   push:
     branches: [main]
 
-# 같은 PR 에 연속으로 push 하면 앞선 실행을 취소한다. 러너 시간 낭비 방지.
 concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-permissions:
-  contents: read
-
 jobs:
-  # ↓ 이 job 의 name 이 곧 Ruleset 에 지정할 status check 이름이 된다.
-  #   워크플로 이름(CI)도 step 이름도 아니다.
-  lint-and-test:
-    name: lint-and-test
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-          cache: pip
-          # 기본 탐색 대상은 requirements.txt 다. 이 repo 는 의존성이
-          # pyproject.toml 에만 있으므로 명시해 준다.
-          cache-dependency-path: pyproject.toml
-
-      - name: Install package with dev extras
-        run: pip install -e ".[dev]"
-
-      - name: Lint (ruff)
-        run: ruff check .
-
-      - name: Test (pytest)
-        run: pytest -q
+  call-shared-ci:
+    uses: seongyong-robotics-lab/.github/.github/workflows/python-ci.yml@v1
+    with:
+      python-version: "3.12"
+      lint: true

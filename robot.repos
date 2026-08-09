@@ -1,0 +1,23 @@
+# vcstool manifest -- RELEASE (all versions pinned to tags)
+#
+#   pip install vcstool
+#   mkdir -p ws/src && cd ws
+#   vcs import src < ../robot.repos
+#
+# ASCII only. vcstool opens this file with the platform default encoding
+# (cp949 on Korean Windows) and dies on non-ASCII bytes.
+# Rationale and design notes live in docs/multi-repo.md.
+#
+# firmware-motor is intentionally absent: different toolchain, different
+# build system, different flash target. See docs/multi-repo.md.
+
+repositories:
+  robot_stack:
+    type: git
+    url: https://github.com/seongyong-robotics-lab/robot-stack.git
+    version: v0.1.0
+
+  robot_config_model_a:
+    type: git
+    url: https://github.com/seongyong-robotics-lab/robot-config-model-a.git
+    version: v0.1.0
