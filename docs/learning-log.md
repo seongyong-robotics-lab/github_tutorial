@@ -37,3 +37,8 @@
 오늘 한 것 : Org `seongyong-robotics-lab` 생성 → repo transfer(무손실) → Team 2개 + repo push 권한 → CODEOWNERS(PR #26 에서 팀 자동 지정 확인) → Issue Type 4종 부여 → 조직 Project `2026 Roadmap` 에 Epic #22 배치. bug/feature 라벨 삭제하고 Type 으로 일원화
 막힌 것    : (1) **Project 는 조직으로 이전이 불가능하다.** repo 만 transfer 된다. 팀 보드가 개인 소유로 남았고, 템플릿 기능도 조직 Project 전용이라 쓸 수 없었다. 처음부터 조직 소유로 만들었어야 했다. (2) 조직 로드맵에 Epic 하나만 넣었는데 `Auto-add sub-issues to project` 기본 워크플로가 하위 5건을 따라 넣어 로드맵이 오염됐다. (3) PR 은 Issue Type 을 가질 수 없어서 릴리스 노트 라벨 분류는 별도 대책이 필요하다
 다음 할 것 : Stage 6 — Notion SYS-REQ DB, REQ ID 규약(수동 2주), 반자동, 그리고 Actions + Notion API 자동 동기화. 커리큘럼이 "핵심"이라 부르는 단계
+
+[2026-08-10] Stage 6
+오늘 한 것 : SYS-REQ DB(REQ-001~008) → 제목 규약 백필 → REQ ID 자동 삽입 워크플로 → 검색 링크 → sync_notion.py + 워크플로. 💥 REQ-999 실패 재현, 💥 양쪽 동시 변경 실험까지 완료
+막힌 것    : (1) 정답지대로 만들면 **경계 규칙을 자동화가 어긴다.** `상태` 한 칸에 승인 여부(Notion 원본)와 진행 상태(GitHub 원본)가 섞여 있어서, 초안 요구사항이 완료로 덮어써진다 → `승인 상태`/`구현 상태` 분리. **경계는 문서가 아니라 스키마에 있어야 한다.** (2) Notion 의 `ID` 는 예약어라 API 로 값을 못 넣음 → `REQ ID` 로 개명. (3) `ALTER COLUMN SET` 이 기존 속성을 바꾸지 않고 `승인 상태 1` 을 새로 만듦. DROP+RENAME 을 같은 배치에 넣으면 `승인 상태 2` 가 됨 → 두 번 나눠 실행. (4) 트리거에 `opened` 를 빠뜨려 완료된 REQ 에 새 이슈가 열려도 Notion 이 완료로 남았다
+다음 할 것 : Stage 7 — robot-stack / firmware-motor / robot-config-model-a repo, `.repos` + vcs import, v0.1.0 태그, 릴리스 매니페스트, 크로스 repo 이슈 참조, `.github` 재사용 워크플로
